@@ -1,11 +1,13 @@
 
-from config import current_config
+
+
 import sys
 import os
 import subprocess
 import venv
 import logging
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import current_config
 
 
 def create_virtual_environment(base_path):
@@ -27,6 +29,21 @@ def create_virtual_environment(base_path):
         [python_executable, "-m", "pip", "install", "--upgrade", "pip"])
 
     logging.warning("Pip has been upgraded.")
+
+    with open(os.path.join(base_path, 'requirements.txt'), 'w') as req_file:
+        subprocess.call(
+            [python_executable, "-m", "pip", "freeze"],
+            stdout=req_file
+        )
+    logging.warning("requirements.txt has been created.")
+
+    activate_script = os.path.join(venv_path, "Scripts", "activate") \
+        if os.name == "nt" else os.path.join(venv_path, "bin", "activate")
+
+    logging.warning(
+        "To activate the virtual environment, run the following command:\n"
+        f"  {activate_script} (Windows)"
+    )
 
 
 def create_directory_structure(base_path):
@@ -66,4 +83,4 @@ def create_directory_structure(base_path):
 
 
 if __name__ == "__main__":
-    create_directory_structure()
+    create_virtual_environment(os.getcwd())
