@@ -1,10 +1,21 @@
 import logging
+import os
+from dotenv import load_dotenv
+
+
+ENV = os.getenv('ENV', 'development')
+if ENV == 'development':
+    load_dotenv()
 
 
 class Config:
     """Basic setup"""
     DEBUG = False
     TESTING = False
+
+    PROJECT_NAME = os.getenv('PROJECT_NAME')
+    VENV_DIRECTORY = os.getenv('VENV_DIRECTORY')
+    PYTHON_EXECUTABLE = os.getenv('PYTHON_EXECUTABLE')
 
     @staticmethod
     def configure_logging():
@@ -41,7 +52,5 @@ config = {
     'testing': TestingConfig
 }
 
-
-ENV = 'development'
 current_config = config.get(ENV, DevelopmentConfig)
 current_config.configure_logging()
